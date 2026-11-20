@@ -1,0 +1,35 @@
+name = "voxgemini-studio"
+main = "worker/index.js"
+compatibility_date = "2025-09-01"
+
+# Le front (dossier dist) est servi directement par Cloudflare.
+# Seules les routes /api/* passent par le Worker.
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Variables NON secrètes : à adapter.
+[vars]
+SUPABASE_URL = "https://ubhyyqigptldattyjbdw.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_FR55GC7FFLWSLb_vg2Ztvw_7jpUlQbq"
+ADMIN_EMAIL = "o.ataligbo@gmail.com"
+# "true" = tout le monde peut générer des voix (avec limites). "false" = réservé à l'admin connecté.
+PUBLIC_ACCESS = "false"
+# Nombre maximum d'appels Gemini par jour (tous visiteurs confondus). 0 = illimité.
+DAILY_LIMIT = "300"
+# Origines autorisées en plus du domaine du site (ex : un domaine personnalisé). Séparées par des virgules.
+ALLOWED_ORIGINS = ""
+# Modèles autorisés (séparés par des virgules). Vide = liste par défaut du Worker.
+ALLOWED_MODELS = ""
+
+# Limitation de débit par IP (gérée par Cloudflare, partagée entre toutes les instances).
+[[ratelimits]]
+name = "LIMITER_GEN"
+namespace_id = "1001"
+simple = { limit = 8, period = 60 }
+
+[[ratelimits]]
+name = "LIMITER_LOGIN"
+namespace_id = "1002"
+simple = { limit = 5, period = 60 }
